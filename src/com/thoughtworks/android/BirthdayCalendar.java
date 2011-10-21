@@ -15,7 +15,6 @@ public class BirthdayCalendar extends Activity implements BirthdayView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
 
         facebook = new Facebook("216175911783054");
         facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(facebook, this));
