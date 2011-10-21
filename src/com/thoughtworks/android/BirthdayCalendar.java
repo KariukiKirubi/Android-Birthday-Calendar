@@ -1,8 +1,10 @@
 package com.thoughtworks.android;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import com.facebook.android.Facebook;
 import com.thoughtworks.android.listener.AuthorizationDialogListener;
@@ -29,9 +31,12 @@ public class BirthdayCalendar extends Activity implements BirthdayView {
     public void showBirthday(final Contacts contacts) {
         runOnUiThread(new Runnable() {
             public void run() {
-                TextView textView = new TextView(getApplicationContext());
+                Context applicationContext = getApplicationContext();
+                ScrollView scrollView = new ScrollView(applicationContext);
+                TextView textView = new TextView(applicationContext);
                 textView.setText(contacts.toString());
-                setContentView(textView);
+                scrollView.addView(textView);
+                setContentView(scrollView);
             }
         });
     }
