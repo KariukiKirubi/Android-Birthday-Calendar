@@ -13,12 +13,13 @@ import com.thoughtworks.android.model.Contacts;
 public class BirthdayCalendar extends Activity implements BirthdayView {
 
     private Facebook facebook;
+    private static final String APP_ID = "216175911783054";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        facebook = new Facebook("216175911783054");
+        facebook = new Facebook(APP_ID);
         facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(facebook, this));
     }
 
