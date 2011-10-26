@@ -5,23 +5,24 @@ import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
-import com.thoughtworks.android.BirthdayView;
+import com.thoughtworks.android.FacebookListener;
 
 public class AuthorizationDialogListener implements Facebook.DialogListener {
 
     private Facebook facebook;
-    private BirthdayView birthdayView;
+    private FacebookListener facebookListener;
 
-    public AuthorizationDialogListener(Facebook facebook, BirthdayView birthdayView) {
+    //TODO: Don't pass along the activity. Notify on authentication success and let the activity do the next step
+    public AuthorizationDialogListener(Facebook facebook, FacebookListener facebookListener) {
         this.facebook = facebook;
-        this.birthdayView = birthdayView;
+        this.facebookListener = facebookListener;
     }
 
     public void onComplete(Bundle values) {
         AsyncFacebookRunner asyncFacebookRunner = new AsyncFacebookRunner(facebook);
         Bundle friendFields = new Bundle();
         friendFields.putString("fields", "birthday,name");
-        asyncFacebookRunner.request("me/friends", friendFields, new FriendsRequestListener(birthdayView));
+        asyncFacebookRunner.request("me/friends", friendFields, new FriendsRequestListener(facebookListener));
     }
 
     public void onFacebookError(FacebookError e) {

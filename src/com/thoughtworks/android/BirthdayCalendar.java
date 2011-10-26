@@ -10,15 +10,15 @@ import com.facebook.android.Facebook;
 import com.thoughtworks.android.listener.AuthorizationDialogListener;
 import com.thoughtworks.android.model.Contacts;
 
-public class BirthdayCalendar extends Activity implements BirthdayView {
+public class BirthdayCalendar extends Activity implements FacebookListener {
 
     private Facebook facebook;
+    private Calendar calendar;
     private static final String APP_ID = "216175911783054";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         facebook = new Facebook(APP_ID);
         facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(facebook, this));
     }
@@ -29,7 +29,7 @@ public class BirthdayCalendar extends Activity implements BirthdayView {
         facebook.authorizeCallback(requestCode, resultCode, data);
     }
 
-    public void showBirthday(final Contacts contacts) {
+    private void showBirthday(final Contacts contacts) {
         runOnUiThread(new Runnable() {
             public void run() {
                 Context applicationContext = getApplicationContext();
@@ -40,5 +40,12 @@ public class BirthdayCalendar extends Activity implements BirthdayView {
                 setContentView(scrollView);
             }
         });
+    }
+
+    @Override
+    public void notifyContactsRecieved(Contacts contacts) {
+        showBirthday(contacts);
+        calendar = new Calendar(this);
+        calendar.addBirthdays(contacts);
     }
 }

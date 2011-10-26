@@ -2,7 +2,7 @@ package com.thoughtworks.android.listener;
 
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.FacebookError;
-import com.thoughtworks.android.BirthdayView;
+import com.thoughtworks.android.FacebookListener;
 import com.thoughtworks.android.model.Contact;
 import com.thoughtworks.android.model.Contacts;
 import org.json.JSONArray;
@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FriendsRequestListener implements AsyncFacebookRunner.RequestListener {
-    private BirthdayView birthdayView;
+    private FacebookListener facebookListener;
 
-    public FriendsRequestListener(BirthdayView birthdayView) {
-        this.birthdayView = birthdayView;
+    public FriendsRequestListener(FacebookListener facebookListener) {
+        this.facebookListener = facebookListener;
     }
 
     public void onComplete(String response, Object state) {
@@ -38,7 +38,7 @@ public class FriendsRequestListener implements AsyncFacebookRunner.RequestListen
             e.printStackTrace();
         }
         Contacts contacts = new Contacts(contactList);
-        birthdayView.showBirthday(contacts);
+        facebookListener.notifyContactsRecieved(contacts);
     }
 
     public void onIOException(IOException e, Object state) {
