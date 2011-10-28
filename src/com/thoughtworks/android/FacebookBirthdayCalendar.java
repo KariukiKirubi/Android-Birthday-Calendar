@@ -10,8 +10,9 @@ import com.facebook.android.Facebook;
 import com.thoughtworks.android.listener.AuthorizationDialogListener;
 import com.thoughtworks.android.model.Contacts;
 
+//TODO: Try titanium for calendar
+//TODO: Try gdata api for calendar
 public class FacebookBirthdayCalendar extends Activity implements FacebookListener {
-
     private Facebook facebook;
     private Calendar calendar;
     private static final String APP_ID = "216175911783054";
@@ -48,7 +49,7 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
 
     @Override
     public void notifyContactsRecieved(Contacts contacts) {
-        showBirthday(contacts);
         calendar.addBirthdays(contacts);
+        showBirthday(contacts);
     }
 }

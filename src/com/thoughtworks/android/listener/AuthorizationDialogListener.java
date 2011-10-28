@@ -8,7 +8,6 @@ import com.facebook.android.FacebookError;
 import com.thoughtworks.android.FacebookListener;
 
 public class AuthorizationDialogListener implements Facebook.DialogListener {
-
     private Facebook facebook;
     private FacebookListener facebookListener;
 

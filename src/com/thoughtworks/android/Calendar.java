@@ -10,7 +10,8 @@ import com.thoughtworks.android.model.Contacts;
 public class Calendar {
     private Activity activity;
     public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
-    private static final String CALENDAR_BASE_URL = "content://com.android.calendar";
+    //TODO: Assign android version specific URI to this
+    private static final String CALENDAR_BASE_URI = "content://com.android.calendar";
 
     public Calendar(Activity activity) {
         this.activity = activity;
@@ -18,20 +19,30 @@ public class Calendar {
 
     public void addBirthdays(Contacts contacts) {
         String[] projection = new String[]{"_id", "name"};
-        Uri calendarsUri = Uri.parse(CALENDAR_BASE_URL + "/calendars");
+        Uri calendarsUri = Uri.parse(CALENDAR_BASE_URI + "/calendars");
         Cursor activeCalendarsCursor = getActiveCalendarsCursor(projection, calendarsUri);
         if (activeCalendarsCursor.moveToFirst()) {
             for (Contact contact : contacts.getContactsWithBirthday()) {
                 int idColumnIndex = activeCalendarsCursor.getColumnIndex("_id");
                 String calendarId = activeCalendarsCursor.getString(idColumnIndex);
-                insertToCalendar(createEvent(calendarId, contact));
+                Uri event = insertToCalendar(createEvent(calendarId, contact));
+                addReminder(event);
             }
         }
     }
 
-    private void insertToCalendar(ContentValues event) {
-        Uri eventsUri = Uri.parse(CALENDAR_BASE_URL + "/events");
-        activity.getContentResolver().insert(eventsUri, event);
+    private void addReminder(Uri event) {
+        Uri remindersUri = Uri.parse(CALENDAR_BASE_URI + "/reminders");
+        ContentValues reminder = new ContentValues();
+        reminder.put("event_id", Long.parseLong(event.getLastPathSegment()));
+        reminder.put("method", 1);
+        reminder.put("minutes", 1);
+        activity.getContentResolver().insert(remindersUri, reminder);
+    }
+
+    private Uri insertToCalendar(ContentValues event) {
+        Uri eventsUri = Uri.parse(CALENDAR_BASE_URI + "/events");
+        return activity.getContentResolver().insert(eventsUri, event);
     }
 
     private Cursor getActiveCalendarsCursor(String[] projection, Uri calendarsUri) {
