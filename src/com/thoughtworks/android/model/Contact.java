@@ -2,9 +2,9 @@ package com.thoughtworks.android.model;
 
 public class Contact {
     private String name;
-    private String birthday;
+    private Birthday birthday;
 
-    public Contact(String name, String birthday) {
+    public Contact(String name, Birthday birthday) {
         this.name = name;
         this.birthday = birthday;
     }
@@ -13,7 +13,15 @@ public class Contact {
         return name;
     }
 
-    public String getBirthday() {
+    public Birthday getBirthday() {
         return birthday;
+    }
+
+    public boolean withoutBirthday() {
+        return birthday.getDate().equals("");
+    }
+
+    public long getBirthdayTime() {
+        return birthday.getTimeInMillis();
     }
 }

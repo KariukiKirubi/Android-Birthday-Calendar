@@ -1,5 +1,6 @@
 package com.thoughtworks.android.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Contacts {
@@ -7,6 +8,15 @@ public class Contacts {
 
     public Contacts(List<Contact> contacts) {
         this.contacts = contacts;
+    }
+
+    public List<Contact> getContactsWithBirthday() {
+        List<Contact> contactsWithBirthday = new ArrayList<Contact>();
+        for (Contact contact : contacts) {
+            if (contact.withoutBirthday()) continue;
+            contactsWithBirthday.add(contact);
+        }
+        return contactsWithBirthday;
     }
 
     @Override

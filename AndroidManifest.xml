@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.thoughtworks.android">
     <application android:icon="@drawable/icon" android:label="Birthday Calendar">
-        <activity android:name=".BirthdayCalendar">
+        <activity android:name=".FacebookBirthdayCalendar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>

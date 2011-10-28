@@ -3,6 +3,7 @@ package com.thoughtworks.android.listener;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.FacebookError;
 import com.thoughtworks.android.FacebookListener;
+import com.thoughtworks.android.model.Birthday;
 import com.thoughtworks.android.model.Contact;
 import com.thoughtworks.android.model.Contacts;
 import org.json.JSONArray;
@@ -31,7 +32,7 @@ public class FriendsRequestListener implements AsyncFacebookRunner.RequestListen
             for (int count = 0; count < contactSize; count++) {
                 JSONObject contactJson = contactsJson.getJSONObject(count);
                 String birthday = contactJson.has("birthday") ? contactJson.getString("birthday") : "";
-                Contact contact = new Contact(contactJson.getString("name"), birthday);
+                Contact contact = new Contact(contactJson.getString("name"), new Birthday(birthday));
                 contactList.add(contact);
             }
         } catch (JSONException e) {
