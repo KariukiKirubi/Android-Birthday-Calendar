@@ -1,10 +1,10 @@
 package com.thoughtworks.android.model;
 
-public class Contact {
+public class Friend {
     private String name;
     private Birthday birthday;
 
-    public Contact(String name, Birthday birthday) {
+    public Friend(String name, Birthday birthday) {
         this.name = name;
         this.birthday = birthday;
     }

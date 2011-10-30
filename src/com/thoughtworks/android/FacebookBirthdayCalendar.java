@@ -6,12 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
 import com.thoughtworks.android.listener.AuthorizationDialogListener;
-import com.thoughtworks.android.model.Contacts;
+import com.thoughtworks.android.listener.FriendsRequestListener;
+import com.thoughtworks.android.model.Friends;
 
-//TODO: Try titanium for calendar
-//TODO: Try gdata api for calendar
 public class FacebookBirthdayCalendar extends Activity implements FacebookListener {
     private Facebook facebook;
     private Calendar calendar;
@@ -25,7 +25,7 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(facebook, this));
+        facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(this));
     }
 
     @Override
@@ -34,13 +34,13 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
         facebook.authorizeCallback(requestCode, resultCode, data);
     }
 
-    private void showBirthday(final Contacts contacts) {
+    private void showBirthday(final Friends friends) {
         runOnUiThread(new Runnable() {
             public void run() {
                 Context applicationContext = getApplicationContext();
                 ScrollView scrollView = new ScrollView(applicationContext);
                 TextView textView = new TextView(applicationContext);
-                textView.setText(contacts.toString());
+                textView.setText(friends.toString());
                 scrollView.addView(textView);
                 setContentView(scrollView);
             }
@@ -48,8 +48,20 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
     }
 
     @Override
-    public void notifyContactsRecieved(Contacts contacts) {
-        calendar.addBirthdays(contacts);
-        showBirthday(contacts);
+    public void notifyFriendsRecieved(Friends friends) {
+        calendar.addBirthdays(friends);
+        showBirthday(friends);
+    }
+
+    @Override
+    public void notifyAuthorizationSuccess() {
+        fetchMyFriends();
+    }
+
+    private void fetchMyFriends() {
+        AsyncFacebookRunner asyncFacebookRunner = new AsyncFacebookRunner(facebook);
+        Bundle friendFields = new Bundle();
+        friendFields.putString("fields", "birthday,name");
+        asyncFacebookRunner.request("me/friends", friendFields, new FriendsRequestListener(this));
     }
 }

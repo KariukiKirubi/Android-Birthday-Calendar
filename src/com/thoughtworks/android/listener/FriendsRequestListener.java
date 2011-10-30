@@ -4,8 +4,8 @@ import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.FacebookError;
 import com.thoughtworks.android.FacebookListener;
 import com.thoughtworks.android.model.Birthday;
-import com.thoughtworks.android.model.Contact;
-import com.thoughtworks.android.model.Contacts;
+import com.thoughtworks.android.model.Friend;
+import com.thoughtworks.android.model.Friends;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,22 +24,22 @@ public class FriendsRequestListener implements AsyncFacebookRunner.RequestListen
     }
 
     public void onComplete(String response, Object state) {
-        List<Contact> contactList = new ArrayList<Contact>();
+        List<Friend> friendList = new ArrayList<Friend>();
         try {
             JSONObject json = new JSONObject(response);
-            JSONArray contactsJson = json.getJSONArray("data");
-            int contactSize = contactsJson == null ? 0 : contactsJson.length();
-            for (int count = 0; count < contactSize; count++) {
-                JSONObject contactJson = contactsJson.getJSONObject(count);
-                String birthday = contactJson.has("birthday") ? contactJson.getString("birthday") : "";
-                Contact contact = new Contact(contactJson.getString("name"), new Birthday(birthday));
-                contactList.add(contact);
+            JSONArray friendsJson = json.getJSONArray("data");
+            int friendsSize = friendsJson == null ? 0 : friendsJson.length();
+            for (int count = 0; count < friendsSize; count++) {
+                JSONObject friendJson = friendsJson.getJSONObject(count);
+                String birthday = friendJson.has("birthday") ? friendJson.getString("birthday") : "";
+                Friend friend = new Friend(friendJson.getString("name"), new Birthday(birthday));
+                friendList.add(friend);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Contacts contacts = new Contacts(contactList);
-        facebookListener.notifyContactsRecieved(contacts);
+        Friends friends = new Friends(friendList);
+        facebookListener.notifyFriendsRecieved(friends);
     }
 
     public void onIOException(IOException e, Object state) {

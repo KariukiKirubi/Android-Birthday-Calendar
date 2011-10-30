@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import com.thoughtworks.android.model.Contact;
-import com.thoughtworks.android.model.Contacts;
+import com.thoughtworks.android.model.Friend;
+import com.thoughtworks.android.model.Friends;
 
 public class Calendar {
     private Activity activity;
@@ -17,15 +17,15 @@ public class Calendar {
         this.activity = activity;
     }
 
-    public void addBirthdays(Contacts contacts) {
+    public void addBirthdays(Friends friends) {
         String[] projection = new String[]{"_id", "name"};
         Uri calendarsUri = Uri.parse(CALENDAR_BASE_URI + "/calendars");
         Cursor activeCalendarsCursor = getActiveCalendarsCursor(projection, calendarsUri);
         if (activeCalendarsCursor.moveToFirst()) {
-            for (Contact contact : contacts.getContactsWithBirthday()) {
+            for (Friend friend : friends.getFriendsHavingBirthday()) {
                 int idColumnIndex = activeCalendarsCursor.getColumnIndex("_id");
                 String calendarId = activeCalendarsCursor.getString(idColumnIndex);
-                Uri event = insertToCalendar(createEvent(calendarId, contact));
+                Uri event = insertToCalendar(createEvent(calendarId, friend));
                 addReminder(event);
             }
         }
@@ -49,9 +49,9 @@ public class Calendar {
         return activity.managedQuery(calendarsUri, projection, "selected=1", null, null);
     }
 
-    private ContentValues createEvent(String calendarId, Contact contact) {
-        long birthdayTime = contact.getBirthdayTime();
-        String title = contact.getName() + "'s Birthday";
+    private ContentValues createEvent(String calendarId, Friend friend) {
+        long birthdayTime = friend.getBirthdayTime();
+        String title = friend.getName() + "'s Birthday";
         ContentValues event = new ContentValues();
         event.put("calendar_id", calendarId);
         event.put("title", title);

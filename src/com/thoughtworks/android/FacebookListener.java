@@ -1,7 +1,9 @@
 package com.thoughtworks.android;
 
-import com.thoughtworks.android.model.Contacts;
+import com.thoughtworks.android.model.Friends;
 
 public interface FacebookListener {
-    void notifyContactsRecieved(Contacts contacts);
+    void notifyAuthorizationSuccess();
+
+    void notifyFriendsRecieved(Friends friends);
 }
