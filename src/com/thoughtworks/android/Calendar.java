@@ -8,18 +8,20 @@ import com.thoughtworks.android.model.Friend;
 import com.thoughtworks.android.model.Friends;
 
 public class Calendar {
+    private String baseUri;
     private Activity activity;
     public static final int MILLISECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
-    //TODO: Assign android version specific URI to this
-    private static final String CALENDAR_BASE_URI = "content://com.android.calendar";
+    private static final String BASE_URI_PRE_FROYO = "content://calendar";
+    private static final String BASE_URI_POST_FROYO = "content://com.android.calendar";
 
     public Calendar(Activity activity) {
         this.activity = activity;
+        this.baseUri = getBaseUri();
     }
 
     public void addBirthdays(Friends friends) {
         String[] projection = new String[]{"_id", "name"};
-        Uri calendarsUri = Uri.parse(CALENDAR_BASE_URI + "/calendars");
+        Uri calendarsUri = Uri.parse(baseUri + "/calendars");
         Cursor activeCalendarsCursor = getActiveCalendarsCursor(projection, calendarsUri);
         if (activeCalendarsCursor.moveToFirst()) {
             for (Friend friend : friends.getFriendsHavingBirthday()) {
@@ -32,7 +34,7 @@ public class Calendar {
     }
 
     private void addReminder(Uri event) {
-        Uri remindersUri = Uri.parse(CALENDAR_BASE_URI + "/reminders");
+        Uri remindersUri = Uri.parse(baseUri + "/reminders");
         ContentValues reminder = new ContentValues();
         reminder.put("event_id", Long.parseLong(event.getLastPathSegment()));
         reminder.put("method", 1);
@@ -41,7 +43,7 @@ public class Calendar {
     }
 
     private Uri insertToCalendar(ContentValues event) {
-        Uri eventsUri = Uri.parse(CALENDAR_BASE_URI + "/events");
+        Uri eventsUri = Uri.parse(baseUri + "/events");
         return activity.getContentResolver().insert(eventsUri, event);
     }
 
@@ -60,5 +62,12 @@ public class Calendar {
         event.put("dtstart", birthdayTime);
         event.put("dtend", birthdayTime + MILLISECONDS_IN_A_DAY);
         return event;
+    }
+
+    private String getBaseUri() {
+        Cursor cursor = activity.managedQuery(Uri.parse(BASE_URI_PRE_FROYO + "/calendars"), null, null, null, null);
+        if (cursor == null)
+            return BASE_URI_POST_FROYO;
+        return BASE_URI_PRE_FROYO;
     }
 }

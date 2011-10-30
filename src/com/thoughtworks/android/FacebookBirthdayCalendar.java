@@ -8,6 +8,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
+import com.thoughtworks.android.helper.View;
 import com.thoughtworks.android.listener.AuthorizationDialogListener;
 import com.thoughtworks.android.listener.FriendsRequestListener;
 import com.thoughtworks.android.model.Friends;
@@ -15,11 +16,12 @@ import com.thoughtworks.android.model.Friends;
 public class FacebookBirthdayCalendar extends Activity implements FacebookListener {
     private Facebook facebook;
     private Calendar calendar;
+    private View view;
     private static final String APP_ID = "216175911783054";
 
     public FacebookBirthdayCalendar() {
         facebook = new Facebook(APP_ID);
-        calendar = new Calendar(this);
+        view = new View();
     }
 
     @Override
@@ -40,7 +42,7 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
                 Context applicationContext = getApplicationContext();
                 ScrollView scrollView = new ScrollView(applicationContext);
                 TextView textView = new TextView(applicationContext);
-                textView.setText(friends.toString());
+                textView.setText(view.getFriendsHavingBirthday(friends));
                 scrollView.addView(textView);
                 setContentView(scrollView);
             }
@@ -49,6 +51,7 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
 
     @Override
     public void notifyFriendsRecieved(Friends friends) {
+        calendar = new Calendar(this);
         calendar.addBirthdays(friends);
         showBirthday(friends);
     }

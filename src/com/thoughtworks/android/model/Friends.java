@@ -18,14 +18,4 @@ public class Friends {
         }
         return friendsHavingBirthday;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (Friend friend : friends) {
-            stringBuilder.append(friend.getName()).append(": ")
-                    .append(friend.getBirthday()).append("\n");
-        }
-        return stringBuilder.toString();
-    }
 }
