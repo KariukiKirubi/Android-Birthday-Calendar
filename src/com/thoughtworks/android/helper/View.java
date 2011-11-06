@@ -1,12 +1,13 @@
 package com.thoughtworks.android.helper;
 
 import com.thoughtworks.android.model.Friend;
-import com.thoughtworks.android.model.Friends;
+
+import java.util.List;
 
 public class View {
-    public String getFriendsHavingBirthday(Friends friends) {
+    public String serializeFriends(List<Friend> friends) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Friend friend : friends.getFriendsHavingBirthday()) {
+        for (Friend friend : friends) {
             stringBuilder.append(friend.getName()).append(": ")
                     .append(friend.getBirthday()).append("\n");
         }

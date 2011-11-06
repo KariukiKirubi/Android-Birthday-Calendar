@@ -1,8 +1,9 @@
 package com.thoughtworks.android;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ScrollView;
@@ -12,11 +13,16 @@ import com.facebook.android.Facebook;
 import com.thoughtworks.android.helper.View;
 import com.thoughtworks.android.listener.AuthorizationDialogListener;
 import com.thoughtworks.android.listener.FriendsRequestListener;
+import com.thoughtworks.android.model.Friend;
 import com.thoughtworks.android.model.Friends;
+
+import java.util.List;
 
 public class FacebookBirthdayCalendar extends Activity implements FacebookListener {
     private View view;
+    private Calendar calendar;
     private Facebook facebook;
+    private AlertDialog alertDialog;
     private ProgressDialog progressDialog;
     private static final String APP_ID = "216175911783054";
 
@@ -28,8 +34,14 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        calendar = new Calendar(this);
+        List<Friend> friends = calendar.getAddedFriends();
+        if (friends != null) {
+            showBirthday(view.serializeFriends(friends));
+            return;
+        }
         progressDialog = new ProgressDialog(this);
-        showStatus("Authorizing...");
+        alertDialog = new AlertDialog.Builder(this).create();
         facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(this));
     }
 
@@ -40,14 +52,35 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
     }
 
     public void notifyAuthorizationSuccess() {
-        showStatusOnUiThread("Fetching friends...");
+        showStatus("Fetching friends...");
         fetchFriends();
     }
 
     public void notifyFriendsRecieved(Friends friends) {
-        showStatusOnUiThread("Adding friends to calendar...");
-        new Calendar(this).addBirthdays(friends);
+        showStatus("Adding friends to calendar...");
+        calendar.addBirthdays(friends);
         showBirthday(friends);
+    }
+
+    public void notifyFailure(final String message) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                alertDialog.setMessage(message);
+                alertDialog.setTitle("Failure");
+                alertDialog.setCancelable(false);
+                alertDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                moveOutOfApplication();
+                            }
+                        });
+                alertDialog.show();
+            }
+        });
+    }
+
+    public void moveOutOfApplication() {
+        moveTaskToBack(true);
     }
 
     private void fetchFriends() {
@@ -61,29 +94,31 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
         runOnUiThread(new Runnable() {
             public void run() {
                 hideStatus();
-                Context applicationContext = getApplicationContext();
-                ScrollView scrollView = new ScrollView(applicationContext);
-                TextView textView = new TextView(applicationContext);
-                String status = "The following friends have been added to your calendar:\n\n";
-                textView.setText(status + view.getFriendsHavingBirthday(friends));
-                scrollView.addView(textView);
-                setContentView(scrollView);
+                String friendsHavingBirthday =
+                        view.serializeFriends(friends.getFriendsHavingBirthday());
+                showBirthday(friendsHavingBirthday);
             }
         });
     }
 
-    private void showStatusOnUiThread(final String message) {
+    private void showBirthday(String friendsHavingBirthday) {
+        ScrollView scrollView = new ScrollView(this);
+        TextView textView = new TextView(this);
+        String status = "The following friends have been added to your calendar:\n\n";
+        textView.setText(status + friendsHavingBirthday);
+        scrollView.addView(textView);
+        setContentView(scrollView);
+    }
+
+    private void showStatus(final String message) {
         runOnUiThread(new Runnable() {
             public void run() {
                 hideStatus();
-                showStatus(message);
+                progressDialog.setMessage(message);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
             }
         });
-    }
-
-    private void showStatus(String message) {
-        progressDialog.setMessage(message);
-        progressDialog.show();
     }
 
     private void hideStatus() {

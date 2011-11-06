@@ -7,6 +7,8 @@ import android.net.Uri;
 import com.thoughtworks.android.model.Friend;
 import com.thoughtworks.android.model.Friends;
 
+import java.util.List;
+
 public class Calendar {
     private String baseUri;
     private Activity activity;
@@ -31,6 +33,10 @@ public class Calendar {
                 addReminder(event);
             }
         }
+    }
+
+    public List<Friend> getAddedFriends() {
+        return null;
     }
 
     private void addReminder(Uri event) {

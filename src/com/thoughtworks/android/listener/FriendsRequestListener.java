@@ -43,14 +43,22 @@ public class FriendsRequestListener implements AsyncFacebookRunner.RequestListen
     }
 
     public void onIOException(IOException e, Object state) {
+        facebookListener.notifyFailure("Failed to connect to server");
     }
 
     public void onFileNotFoundException(FileNotFoundException e, Object state) {
+        notifyGenericFailure();
     }
 
     public void onMalformedURLException(MalformedURLException e, Object state) {
+        notifyGenericFailure();
     }
 
     public void onFacebookError(FacebookError e, Object state) {
+        notifyGenericFailure();
+    }
+
+    private void notifyGenericFailure() {
+        facebookListener.notifyFailure("Fetch friends failed");
     }
 }

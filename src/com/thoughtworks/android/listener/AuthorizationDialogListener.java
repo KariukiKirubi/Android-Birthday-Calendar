@@ -18,11 +18,14 @@ public class AuthorizationDialogListener implements Facebook.DialogListener {
     }
 
     public void onFacebookError(FacebookError e) {
+        facebookListener.notifyFailure("Facebook Authorization failure");
     }
 
     public void onError(DialogError e) {
+        facebookListener.notifyFailure("Failed to connect to server");
     }
 
     public void onCancel() {
+        facebookListener.moveOutOfApplication();
     }
 }
