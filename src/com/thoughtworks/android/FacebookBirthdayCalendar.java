@@ -36,7 +36,7 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
         super.onCreate(savedInstanceState);
         calendar = new Calendar(this);
         List<Friend> friends = calendar.getAddedFriends();
-        if (friends != null) {
+        if (!friends.isEmpty()) {
             showBirthday(view.serializeFriends(friends));
             return;
         }
