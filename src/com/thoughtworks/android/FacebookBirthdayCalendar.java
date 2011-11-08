@@ -34,14 +34,17 @@ public class FacebookBirthdayCalendar extends Activity implements FacebookListen
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         calendar = new Calendar(this);
+        progressDialog = new ProgressDialog(this);
+        alertDialog = new AlertDialog.Builder(this).create();
+
         List<Friend> friends = calendar.getAddedFriends();
         if (!friends.isEmpty()) {
             showBirthday(view.serializeFriends(friends));
             return;
         }
-        progressDialog = new ProgressDialog(this);
-        alertDialog = new AlertDialog.Builder(this).create();
+
         facebook.authorize(this, new String[]{"friends_birthday"}, new AuthorizationDialogListener(this));
     }
 
