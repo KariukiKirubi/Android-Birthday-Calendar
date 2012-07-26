@@ -1,0 +1,16 @@
+.DS_Store
+.idea/
+BirthdayCalendar.apk
+BirthdayCalendar.apk.unaligned
+BirthdayCalendar.apk.unsigned
+BirthdayCalendar.iml
+functional-tests/.DS_Store
+functional-tests/functional-tests.iml
+functional-tests/gen/
+gen/
+libs/.DS_Store
+libs/test/.DS_Store
+libs/test/robolectric-0.9.4-src.jar
+out/
+tmp/
+
